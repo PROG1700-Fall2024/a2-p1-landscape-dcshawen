@@ -1,19 +1,11 @@
-#Program 1 – Landscape Calculator
-#A landscaping company needs a program that computes the price of landscaping for a new housing development. 
-
-#Student #:     
-#Student Name:  
+"""
+    Author: Dan Shaw w0190983
+    Title: Landscape Calculator
+    Description: Computes the price of landscaping a new development based on plot address, width and length
+"""
 
 def main():
-    # YOUR CODE STARTS HERE, each line must be indented (one tab)
+    pass
 
-
-
-
-
-
-
-
-    # YOUR CODE ENDS HERE
-
-main()
+if __name__ == "__main__":
+    main()
