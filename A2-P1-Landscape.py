@@ -9,13 +9,8 @@ BASE_LABOUR = 1000
 SURFACE_THRESHOLD = 5000
 THRESHOLD_COST_MODIFIER = 500
 TREE_COST = 100
+GRASS_SQFT = ([ ["FESCUE", 0.05], ["BENTGRASS", 0.02], ["CAMPUS", 0.01] ])
 
-#NOTE I wish multidimensional arrays didn't behave so weird in Python because they'd be a better choice than a dictionary
-GRASS_SQFT = {
-    "FESCUE": 0.05,
-    "BENTGRASS": 0.02,
-    "CAMPUS": 0.01
-}
 propDimensions = []
 
 def main():
@@ -32,30 +27,29 @@ def main():
     propDimensions = [ getPropDimension(0), getPropDimension(1) ]
 
     grassType = getGrassType()
-    # Output selected grass type
-    print("You have selected {0} grass.".format(grassType.capitalize()))
-
-    # Get number of trees from the user
-    treeCount = int(getTreeCount())
-
-    print("The total cost for landscaping property {0} is ${1:,.2f}".format(houseNumber, calculateValues(treeCount, grassType)))
+    print(grassType)
 
 def getGrassType():
     global GRASS_SQFT
     i = 0
     print("Enter the number that corresponds to the desired grass type.")
-
-    # Iterates through dictionary items and outputs them to the user
-    #NOTE Iterating through it is why a multidimensional array would have been better but the dataset is small enough I'm not worried about it
-    for key, value in GRASS_SQFT.items():
+    
+    for row in GRASS_SQFT:
+        print("\t({0}) {1}".format(i + 1, row[0]))
         i += 1
-        print("\t({0}) {1}".format(i, key.capitalize()))
     
     #TODO VALIDATE
-    index = input("> ")
+    index = int(input("> "))
+    index -= 1  
     grassType = getGrassTypeFromIndex(index)
 
-    return grassType
+    # Output selected grass type
+    print("You have selected {0} grass.".format(grassType.capitalize()))
+
+    # Get number of trees from the user
+    treeCount = int(getTreeCount())
+    totalCost = calculateValues(treeCount, index)
+    print(totalCost)
 
 def calculateValues(treeCount, grassType):
     # Get access to global variables
@@ -63,19 +57,19 @@ def calculateValues(treeCount, grassType):
 
     propertyArea = int(propDimensions[0]) * int(propDimensions[1]) 
     if propertyArea > SURFACE_THRESHOLD:
-        totalCost = BASE_LABOUR + (treeCount * TREE_COST) + (propertyArea * GRASS_SQFT[grassType]) + THRESHOLD_COST_MODIFIER
+        totalCost = BASE_LABOUR + (treeCount * TREE_COST) + (propertyArea * GRASS_SQFT[grassType][1]) + THRESHOLD_COST_MODIFIER
     else:
-        totalCost = BASE_LABOUR + (propertyArea * GRASS_SQFT[grassType]) + (treeCount * TREE_COST)
+        totalCost = BASE_LABOUR + (propertyArea * GRASS_SQFT[grassType][1]) + (treeCount * TREE_COST)
 
     return totalCost
 
 def getGrassTypeFromIndex(index):
     match index:
-        case "1":
+        case 0:
             return "FESCUE"
-        case "2":
+        case 1:
             return "BENTGRASS"
-        case "3":
+        case 2:
             return "CAMPUS"
         case _:
             return None
