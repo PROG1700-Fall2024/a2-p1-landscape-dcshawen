@@ -27,7 +27,11 @@ def main():
     propDimensions = [ getPropDimension(0), getPropDimension(1) ]
 
     grassType = getGrassType()
-    print(grassType)
+    # Get number of trees from the user
+    treeCount = int(getTreeCount())
+    totalCost = calculateValues(treeCount, grassType)
+    print(totalCost)
+
 
 def getGrassType():
     global GRASS_SQFT
@@ -40,16 +44,11 @@ def getGrassType():
     
     #TODO VALIDATE
     index = int(input("> "))
-    index -= 1  
-    grassType = getGrassTypeFromIndex(index)
+    index -= 1
 
     # Output selected grass type
-    print("You have selected {0} grass.".format(grassType.capitalize()))
-
-    # Get number of trees from the user
-    treeCount = int(getTreeCount())
-    totalCost = calculateValues(treeCount, index)
-    print(totalCost)
+    print("You have selected {0} grass.".format(GRASS_SQFT[index][0].capitalize()))
+    return index
 
 def calculateValues(treeCount, grassType):
     # Get access to global variables
@@ -62,17 +61,6 @@ def calculateValues(treeCount, grassType):
         totalCost = BASE_LABOUR + (propertyArea * GRASS_SQFT[grassType][1]) + (treeCount * TREE_COST)
 
     return totalCost
-
-def getGrassTypeFromIndex(index):
-    match index:
-        case 0:
-            return "FESCUE"
-        case 1:
-            return "BENTGRASS"
-        case 2:
-            return "CAMPUS"
-        case _:
-            return None
 
 def getTreeCount():
     return input("Enter the number of trees desired.\n> ")
