@@ -4,6 +4,8 @@
     Description: Computes the price of landscaping a new development based on plot width and depth, as well as grass type and tree count
 """
 
+from DanMath import Validation
+
 # Creates global level variables for all constant values
 BASE_LABOUR = 1000
 SURFACE_THRESHOLD = 5000
@@ -14,7 +16,7 @@ GRASS_SQFT = ([ ["FESCUE", 0.05],
                 ["CAMPUS", 0.01] ])
 
 def main():
-    greeting = "| Landscaping Cost Calculator |"
+    greeting = "| LANDSCAPING COST CALCULATOR |"
 
     # Outputs the greeting banner to the user
     print("-" * len(greeting))
@@ -68,18 +70,9 @@ def getTotalCost(propDimensions, treeCount, grassType):
 
     return totalCost
 
-# NOTE I spent so long trying to figure out why this function actually works because converting a decimal number to an int shouldn't throw an exception at all, then I realized trying to convert a STRING with a decimal to an int will throw a ValueError
-# Attempts to convert value to int. If successful, returns the converted value
-# If fails, returns None
-def validateInt(value):
-    try:
-        return int(value)
-    except ValueError:
-        return None
-
 # Gets the desired number of trees from the user and validates input
 def getTreeCount():
-    while (treeCount := validateInt(input("Enter the number of trees desired.\n> "))) == None:
+    while (treeCount := Validation.validateInt(input("Enter the number of trees desired.\n> "))) == None:
         print("Invalid input. Please enter a valid number of trees.")
     return treeCount
 
@@ -104,17 +97,17 @@ def getValidInputs():
 # axis == 1 -> width
 def getPropDimension(axis):
     if axis == 0:
-        while (propDimension := validateInt(input("Enter property depth in feet.\n> "))) == None:
+        while (propDimension := Validation.validateInt(input("Enter property depth in feet.\n> "))) == None:
             print("Invalid input. Please enter a valid property depth.")
         return propDimension
     elif axis == 1:
-        while (propDimension := validateInt(input("Enter property width in feet.\n> "))) == None:
+        while (propDimension := Validation.validateInt(input("Enter property width in feet.\n> "))) == None:
             print("Invalid input. Please enter a valid property width.")
         return propDimension
 
 # Gets and validates house number
 def getHouseNumber():
-    while (houseNumber := validateInt(input("Enter Your House Number.\n> "))) == None:
+    while (houseNumber := Validation.validateInt(input("Enter Your House Number.\n> "))) == None:
         print("Invalid input. Please enter a valid house number.")
     return houseNumber
 
