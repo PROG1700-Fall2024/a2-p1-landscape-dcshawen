@@ -13,75 +13,78 @@ GRASS_SQFT = ([ ["FESCUE", 0.05],
                 ["BENTGRASS", 0.02], 
                 ["CAMPUS", 0.01] ])
 
-propDimensions = []
-
 def main():
-    global propDimensions
-    # Declare some local variables
     greeting = "| Landscaping Cost Calculator |"
 
-    # Output greeting banner to user
+    # Outputs the greeting banner to the user
     print("-" * len(greeting))
     print(greeting)
     print("-" * len(greeting))
 
-    # Get user input, validate within functions
+    # Gets user input, validates within functions
     houseNumber = getHouseNumber()
     propDimensions = [ getPropDimension(0), getPropDimension(1) ]
     grassType = getGrassType()
     treeCount = getTreeCount()
 
-    # Perform calculations
-    totalCost = calculateValues(treeCount, grassType)
+    # Performs calculations
+    totalCost = getTotalCost(propDimensions, treeCount, grassType)
     print(totalCost)
 
-
+# Gets and validates the type of grass from the user
 def getGrassType():
     global GRASS_SQFT
     i = 0
     print("Enter the number that corresponds to the desired grass type.")
     
-    for row in GRASS_SQFT:
-        print("\t({0}) {1}".format(i + 1, row[0])) # Add 1 to account for 0-indexing
+    # Iterates through GRASS_SQFT and outputs the grass type along with its index
+    for grassType in GRASS_SQFT:
+        print("\t({0}) {1}".format(i + 1, grassType[0])) # Add 1 to account for 0-indexing
         i += 1
     
-    while (index := validateGrassInput(input("> "))) is None:
+    # Gets and validates the type of grass from the user
+    while (index := validateGrassInput(input("> "))) == None:
         print("Invalid input. Please enter a valid grass type.")
     
-    # Subtract 1 to get back to 0-indexing
+    # Subtracts 1 to get back to 0-indexing
     index -= 1
 
-    # Output selected grass type
+    # Outputs the selected grass type
     print("You have selected {0} grass.".format(GRASS_SQFT[index][0].capitalize()))
     return index
 
-def calculateValues(treeCount, grassType):
+# Calculate the total cost of the landscaping based on propDimensions, treeCount, and grassType
+def getTotalCost(propDimensions, treeCount, grassType):
     # Get access to global variables
-    global BASE_LABOUR, SURFACE_THRESHOLD, THRESHOLD_COST_MODIFIER, TREE_COST, GRASS_SQFT, propDimensions
+    global BASE_LABOUR, SURFACE_THRESHOLD, THRESHOLD_COST_MODIFIER, TREE_COST, GRASS_SQFT
 
+    # Calculates the property area
     propertyArea = int(propDimensions[0]) * int(propDimensions[1]) 
+
+    # Calculate the total cost and, if the property area is greater than the SURFACE_THRESHOLD, add the THRESHOLD_COST_MODIFIER
+    totalCost = BASE_LABOUR + (propertyArea * GRASS_SQFT[grassType][1]) + (treeCount * TREE_COST)
     if propertyArea > SURFACE_THRESHOLD:
-        totalCost = BASE_LABOUR + (treeCount * TREE_COST) + (propertyArea * GRASS_SQFT[grassType][1]) + THRESHOLD_COST_MODIFIER
-    else:
-        totalCost = BASE_LABOUR + (propertyArea * GRASS_SQFT[grassType][1]) + (treeCount * TREE_COST)
+        totalCost += THRESHOLD_COST_MODIFIER
 
     return totalCost
 
-# Attempt to convert value to int. If successful return the converted value
-# If fails, return None
+# NOTE I spent so long trying to figure out why this function actually works because converting a decimal number to an int shouldn't throw an exception at all, then I realized trying to convert a STRING with a decimal to an int will throw a ValueError
+# Attempts to convert value to int. If successful, returns the converted value
+# If fails, returns None
 def validateInt(value):
     try:
         return int(value)
-    except:
+    except ValueError:
         return None
 
+# Gets the desired number of trees from the user and validates input
 def getTreeCount():
-    while (treeCount := validateInt(input("Enter the number of trees desired.\n> "))) is None:
+    while (treeCount := validateInt(input("Enter the number of trees desired.\n> "))) == None:
         print("Invalid input. Please enter a valid number of trees.")
     return treeCount
 
-# Return converted value if inputString is in validInput list
-# Return None if inputString is not in validInput list
+# Returns converted value if inputString is in validInput list
+# Returns None if inputString is not in validInput list
 def validateGrassInput(inputString):
     validInput = getValidInputs()
     if inputString not in validInput:
@@ -96,18 +99,22 @@ def getValidInputs():
         validInput.append(str(i + 1))
     return validInput
 
-def getPropDimension(i):
-    if i == 0:
-        while (propDimension := validateInt(input("Enter property depth in feet.\n> "))) is None:
+# Gets and validates property dimensions
+# axis == 0 -> depth
+# axis == 1 -> width
+def getPropDimension(axis):
+    if axis == 0:
+        while (propDimension := validateInt(input("Enter property depth in feet.\n> "))) == None:
             print("Invalid input. Please enter a valid property depth.")
         return propDimension
-    elif i == 1:
-        while (propDimension := validateInt(input("Enter property width in feet.\n> "))) is None:
+    elif axis == 1:
+        while (propDimension := validateInt(input("Enter property width in feet.\n> "))) == None:
             print("Invalid input. Please enter a valid property width.")
         return propDimension
 
+# Gets and validates house number
 def getHouseNumber():
-    while (houseNumber := validateInt(input("Enter Your House Number.\n> "))) is None:
+    while (houseNumber := validateInt(input("Enter Your House Number.\n> "))) == None:
         print("Invalid input. Please enter a valid house number.")
     return houseNumber
 
