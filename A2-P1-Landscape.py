@@ -31,15 +31,15 @@ def main():
 
     # Performs calculations
     totalCost = getTotalCost(propDimensions, treeCount, grassType)
-    print(totalCost)
+    print("Total Cost for house {0}: ${1:,.2f}".format(houseNumber, totalCost))
 
 # Gets and validates the type of grass from the user
 def getGrassType():
-    global GRASS_SQFT
     i = 0
     print("Enter the number that corresponds to the desired grass type.")
     
     # Iterates through GRASS_SQFT and outputs the grass type along with its index
+    # NOTE I know iterating through it is overkill to display a 3 element list but I like to keep scalability in mind if there were, say, a dozen different grass types
     for grassType in GRASS_SQFT:
         print("\t({0}) {1}".format(i + 1, grassType[0])) # Add 1 to account for 0-indexing
         i += 1
@@ -57,9 +57,6 @@ def getGrassType():
 
 # Calculate the total cost of the landscaping based on propDimensions, treeCount, and grassType
 def getTotalCost(propDimensions, treeCount, grassType):
-    # Get access to global variables
-    global BASE_LABOUR, SURFACE_THRESHOLD, THRESHOLD_COST_MODIFIER, TREE_COST, GRASS_SQFT
-
     # Calculates the property area
     propertyArea = int(propDimensions[0]) * int(propDimensions[1]) 
 
@@ -96,14 +93,21 @@ def getValidInputs():
 # axis == 0 -> depth
 # axis == 1 -> width
 def getPropDimension(axis):
+    axisString = ""
+    
     if axis == 0:
-        while (propDimension := Validation.validateInt(input("Enter property depth in feet.\n> "))) == None:
-            print("Invalid input. Please enter a valid property depth.")
-        return propDimension
+        axisString = "depth"
     elif axis == 1:
-        while (propDimension := Validation.validateInt(input("Enter property width in feet.\n> "))) == None:
-            print("Invalid input. Please enter a valid property width.")
-        return propDimension
+        axisString = "width"
+
+    while (propDimension := Validation.validateInt(input("Enter property {0} in feet.\n> ".format(axisString)))) == None:
+        print("Invalid input. Please enter a valid {0}".format(axisString))
+
+    while propDimension <= 0:
+        while (propDimension := Validation.validateInt(input("Property {0} must be greater than 0. Please enter a valid {0}".format(axisString)))) == None:
+            continue
+
+    return propDimension
 
 # Gets and validates house number
 def getHouseNumber():
