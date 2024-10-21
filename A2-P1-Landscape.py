@@ -19,24 +19,22 @@ def main():
     greeting = "| LANDSCAPING COST CALCULATOR |"
 
     # Outputs the greeting banner to the user
-    print("-" * len(greeting))
-    print(greeting)
-    print("-" * len(greeting))
+    print(("-" * len(greeting)) + "\n" + greeting + "\n" + ("-" * len(greeting)))
 
     # Gets user input, validates within functions
     houseNumber = getHouseNumber()
     propDimensions = [ getPropDimension(0), getPropDimension(1) ]
+    print("Enter the number that corresponds to the desired grass type.")
     grassType = getGrassType()
     treeCount = getTreeCount()
 
     # Performs calculations
-    totalCost = getTotalCost(propDimensions, treeCount, grassType)
+    totalCost = calculateTotalCost(propDimensions, treeCount, grassType)
     print("Total Cost for house {0}: ${1:,.2f}".format(houseNumber, totalCost))
 
 # Gets and validates the type of grass from the user
 def getGrassType():
     i = 0
-    print("Enter the number that corresponds to the desired grass type.")
     
     # Iterates through GRASS_SQFT and outputs the grass type along with its index
     # NOTE I know iterating through it is overkill to display a 3 element list but I like to keep scalability in mind if there were, say, a dozen different grass types
@@ -56,7 +54,7 @@ def getGrassType():
     return index
 
 # Calculate the total cost of the landscaping based on propDimensions, treeCount, and grassType
-def getTotalCost(propDimensions, treeCount, grassType):
+def calculateTotalCost(propDimensions, treeCount, grassType):
     # Calculates the property area
     propertyArea = int(propDimensions[0]) * int(propDimensions[1]) 
 
@@ -73,21 +71,28 @@ def getTreeCount():
         print("Invalid input. Please enter a valid number of trees.")
     return treeCount
 
+# NOTE I'd probably change this to a generic "validateInputInList(inputString, listToCheck)" function and add it to my Validation Class but I'm keeping it in the main file for this submission because a lot of the internal logic directly relates to rubric outcomes
 # Returns converted value if inputString is in validInput list
 # Returns None if inputString is not in validInput list
 def validateGrassInput(inputString):
-    validInput = getValidInputs()
-    if inputString not in validInput:
+    validInput = []
+
+    # Everything in try/except block for handling inputString if it's a string
+    try:
+        int(inputString)
+    except:
+        for i, type in enumerate(GRASS_SQFT):
+            if inputString.upper() == type[0]:
+                return i + 1
         return None
     
-    return int(inputString)
-
-# Gets the length of GRASS_SQFT and populates validInput with the indices
-def getValidInputs():
-    validInput = []
-    for i in range(len(GRASS_SQFT)):
+    # This point down handles inputString if it's an int
+    for i in range(len(GRASS_SQFT)): # Gets the length of GRASS_SQFT and populates validInput with the indices to validate user selection
         validInput.append(str(i + 1))
-    return validInput
+
+    if inputString not in validInput:
+        return None
+    return int(inputString)
 
 # Gets and validates property dimensions
 # axis == 0 -> depth
