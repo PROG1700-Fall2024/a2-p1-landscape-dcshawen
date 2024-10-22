@@ -24,7 +24,6 @@ def main():
     # Gets user input, validates within functions
     houseNumber = getHouseNumber()
     propDimensions = [ getPropDimension(0), getPropDimension(1) ]
-    print("Enter the number that corresponds to the desired grass type.")
     grassType = getGrassType()
     treeCount = getTreeCount()
 
@@ -34,17 +33,11 @@ def main():
 
 # Gets and validates the type of grass from the user
 def getGrassType():
-    i = 0
-    
-    # Iterates through GRASS_SQFT and outputs the grass type along with its index
-    # NOTE I know iterating through it is overkill to display a 3 element list but I like to keep scalability in mind if there were, say, a dozen different grass types
-    for grassType in GRASS_SQFT:
-        print("\t({0}) {1}".format(i + 1, grassType[0])) # Add 1 to account for 0-indexing
-        i += 1
-    
+    outputGrassList()    
     # Gets and validates the type of grass from the user
-    while (index := validateGrassInput(input("> "))) == None:
+    while (index := validateGrassInput(input("Please selecet your desired grass type\n> "))) == None:
         print("Invalid input. Please enter a valid grass type.")
+        outputGrassList()
     
     # Subtracts 1 to get back to 0-indexing
     index -= 1
@@ -52,6 +45,15 @@ def getGrassType():
     # Outputs the selected grass type
     print("You have selected {0} grass.".format(GRASS_SQFT[index][0].capitalize()))
     return index
+
+def outputGrassList():
+    # Declaring this at the function level for scope
+    i = 0
+    # Iterates through GRASS_SQFT and outputs the grass type along with its index
+    # NOTE I know iterating through it is overkill to display a 3 element list but I like to keep scalability in mind
+    for grassType in GRASS_SQFT:
+        print("\t({0}) {1}".format(i + 1, grassType[0])) # Add 1 to account for 0-indexing
+        i += 1
 
 # Calculate the total cost of the landscaping based on propDimensions, treeCount, and grassType
 def calculateTotalCost(propDimensions, treeCount, grassType):
